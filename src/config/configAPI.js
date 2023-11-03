@@ -1,5 +1,10 @@
+//@ts-check
 const caminhoInterno1 = "http://localhost:3000/api/tgroute/";
+const caminhoInterno2='';
+const caminhoInterno3='';
+const caminhoExterno1='';
 const caminhoExterno2 = "http://191.36.173.16:3000/api/tgroute/"; //acmtracker serv2 externo (5 - techgenesis)
+
 
 let caminhoAPI = "";
 

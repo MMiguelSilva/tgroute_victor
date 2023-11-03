@@ -192,6 +192,7 @@ export default {
               tipoUsuario = res.data.results.rows[0].tipousuario;
               visualizaOcorrencias = res.data.results.rows[0].visualizaocorrencias;
               this.idCliente = idCliente;
+              console.log('token: ' + token)
             } else {
               console.log("Usuário ou senha não localizado!");
               this.avisoErro = "Usuário ou senha não localizado!";

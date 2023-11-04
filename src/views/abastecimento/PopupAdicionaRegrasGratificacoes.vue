@@ -40,7 +40,7 @@
         <h4 v-else>Código: {{ id }}</h4>
       </v-card-title>
       <v-card-text>
-        <v-form class="px-3" ref="form">
+        <v-form class="px-3" ref="form" style='width:100%;'>
           <v-row>
             <v-col cols="6">
               <v-select
@@ -70,9 +70,9 @@
             </v-col>
           </v-row>
 
-          <v-row>
-            <v-flex xs12 sm4 md5>
-      <v-row v-if="lstLctoGratificacoes.length > 0">
+          <v-row style='width:100%;'>
+            <v-flex style='width:100%;'>
+      <v-row v-if="lstLctoGratificacoes.length > 0" >
         <v-col>
           <v-row>
             <v-col align="center" justify="justify-center">
@@ -80,14 +80,15 @@
             </v-col>
           </v-row>
 
-          <v-simple-table fixed-header height="auto" class="table d-flex ">
-  <template v-slot:default>
-    <thead>
-      <tr>
-        <th class="text-left caption primary white--text" width="33%">Média de</th>
-        <th class="text-left caption primary white--text" width="33%">Média até</th>
-        <th class="text-left caption primary white--text" width="33%">Valor</th>
-      </tr>
+  <v-simple-table fixed-header height="auto" width='100' class="table">
+    
+    <template v-slot:default >
+      <thead>
+        <tr>
+          <th class="text-left caption primary white--text" width="33%">Média de</th>
+          <th class="text-left caption primary white--text" width="33%">Média até</th>
+          <th class="text-left caption primary white--text" width="33%">Valor</th>
+          </tr>
     </thead>
     <tbody>
       <tr v-for="(item) in  lstLctoGratificacoes" :key="item.id">
@@ -98,6 +99,7 @@
     </tbody>
   </template>
 </v-simple-table>
+
         </v-col>
       </v-row>
     </v-flex>

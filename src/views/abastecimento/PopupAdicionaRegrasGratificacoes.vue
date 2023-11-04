@@ -91,10 +91,31 @@
           </tr>
     </thead>
     <tbody>
-      <tr v-for="(item) in  lstLctoGratificacoes" :key="item.id">
+      <tr v-for="(item) in lstLctoGratificacoes" :key="item.id">
         <td class="caption" width="33%">{{ item.mediade }}</td>
         <td class="caption" width="33%">{{ item.mediaate }}</td>
         <td class="caption" width="33%">{{ item.valor }}</td>
+
+        <td class="caption">
+          <div style="display: flex; align-items: center;">
+            <v-btn
+              x-small
+              color="primary"
+              text
+              @click="alteraGratificacao"
+            >
+              <v-icon size="20">edit</v-icon>
+            </v-btn>
+            <v-btn
+              x-small
+              color="primary"
+              text
+              @click="alteraGratificacao"
+            >
+              <v-icon size="20" color='red'>delete</v-icon>
+            </v-btn>
+          </div>
+        </td>
       </tr>
     </tbody>
   </template>

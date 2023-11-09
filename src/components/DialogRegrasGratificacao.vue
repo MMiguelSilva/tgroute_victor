@@ -1,31 +1,9 @@
 <template>
-    <v-dialog v-model="dialog">
-        <template v-slot:activator="{ on, attrs }">
+    <v-dialog v-model="dialog" max-width="300px">
+        <template>
           <span>
-            {{ mensagem }}
+          Teste
           </span>
-          <v-btn
-        v-if="Number(id) == 0"
-        class="mx-1"
-        color="primary"
-        x-small
-        v-bind="attrs"
-        v-on="on"
-        @click="dialog = true"
-      >
-        <v-icon x-small>note_add</v-icon>Nova Regra
-      </v-btn>
-
-          <v-btn
-        x-small
-        v-if="Number(id) > 0"
-        color="primary"
-        text
-        v-bind="attrs"
-        v-on="on"
-        @click="alteraGratificacao"
-      >Sim</v-btn>
-
     </template>
     </v-dialog>
   </template>
@@ -34,11 +12,11 @@
   
   export default {
     props:{
-      mensagem:String
+      idRegrasGratificacao: Number,
     },
     data() {
       return {
-        showDialog: true,
+        dialog: false,
         title: 'EditarRegraGratificacao',
         message: 'Editar',
       };
@@ -46,12 +24,13 @@
 
     methods: {
       closeDialog() {
-        this.showDialog = false;
+        
       },
     },
+    mounted(){
+      console.log("id: " + this.idRegrasGratificacao)
+    }
   };
-
-
   </script>
   
   <style scoped>

@@ -1,6 +1,7 @@
 <template>
   <v-dialog v-model="dialog" max-width="800px" persistent>
     <template v-slot:activator="{ on, attrs }">
+      <DialogRegrasGratificacao :mensagem="banana"></DialogRegrasGratificacao>
       <v-btn
         v-if="Number(id) == 0"
         class="mx-1"
@@ -23,7 +24,7 @@
         @click="alteraGratificacao"
       >Sim</v-btn>
     </template>
-
+    <dialog-regras-gratificacao></dialog-regras-gratificacao>
         <v-snackbar v-model="snackbarAviso" :timeout="4000" top color="success">
       <span>{{ aviso }}</span>
       <v-btn small color="black" @click="snackbarAviso = false">Fechar</v-btn>
@@ -85,16 +86,17 @@
     <template v-slot:default >
       <thead>
         <tr>
-          <th class="text-left caption primary white--text" width="33%">Média de</th>
-          <th class="text-left caption primary white--text" width="33%">Média até</th>
-          <th class="text-left caption primary white--text" width="33%">Valor</th>
+          <th class="text-left caption primary white--text" width="25%">Média de</th>
+          <th class="text-left caption primary white--text" width="25%">Média até</th>
+          <th class="text-left caption primary white--text" width="25%">Valor</th>
+          <th class="text-left caption primary white--text" width="25%">Ações</th>
           </tr>
     </thead>
     <tbody>
       <tr v-for="(item) in lstLctoGratificacoes" :key="item.id">
-        <td class="caption" width="33%">{{ item.mediade }}</td>
-        <td class="caption" width="33%">{{ item.mediaate }}</td>
-        <td class="caption" width="33%">{{ item.valor }}</td>
+        <td class="caption" width="25%">{{ item.mediade }}</td>
+        <td class="caption" width="25%">{{ item.mediaate }}</td>
+        <td class="caption" width="25%">{{ item.valor }}</td>
 
         <td class="caption">
           <div style="display: flex; align-items: center;">
@@ -102,7 +104,7 @@
               x-small
               color="primary"
               text
-              @click="alteraGratificacao"
+              @click="()=>alteraGratificacao(item)" 
             >
               <v-icon size="20">edit</v-icon>
             </v-btn>
@@ -136,8 +138,12 @@
 import axios from "axios";
 import cripto from "../../lib/cripto";
 import caminhoAPI from "../../config/configAPI";
+import DialogRegrasGratificacao from "../../components/DialogRegrasGratificacao.vue";
+
+
 
 export default {
+  components: { DialogRegrasGratificacao },
   data() {
     return {
       loading: false,
@@ -151,6 +157,7 @@ export default {
       descricao: "",
       idCliente: 0,
       lstLctoGratificacoes: [],
+      banana:'mixirica'
     };
   },
   props: {
@@ -238,9 +245,11 @@ export default {
       const [year, month, day] = data.split("-");
       return `${day}/${month}/${year}`;
     },
-    alteraGratificacao() {
-      this.dialog = true;
+    alteraGratificacao(gratificacao) {
+       this.dialog = true;
       this.$emit("alteraGratificacao");
+      console.log(gratificacao);
+
     },
 
 

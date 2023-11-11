@@ -24,7 +24,7 @@
         >Sim</v-btn
       >
     </template>
-    
+
     <v-snackbar v-model="snackbarAviso" :timeout="4000" top color="success">
       <span>{{ aviso }}</span>
       <v-btn small color="black" @click="snackbarAviso = false">Fechar</v-btn>
@@ -65,8 +65,7 @@
           <v-spacer></v-spacer>
 
           <v-row>
-            <v-col align="center" justify="justify-center">
-              
+            <v-col align="center" >
               <v-btn
                 x-small
                 class="primary mx-0"
@@ -74,6 +73,15 @@
                 :loading="loading"
                 >Gravar</v-btn
               >
+
+              <v-btn
+                x-small
+                class="primary mx-0"
+                @click="validaCampos"
+                :loading="loading"
+                >ADICIONAR REGRA</v-btn
+              >
+
               <v-btn x-small class="primary mx-0 ml-5" @click="sair"
                 >Sair</v-btn
               >
@@ -101,25 +109,25 @@
                         <tr>
                           <th
                             class="text-right caption primary white--text"
-                            width="25%"  
+                            width="25%"
                           >
                             Média de
                           </th>
                           <th
                             class="text-right caption primary white--text"
-                            width="25%" 
+                            width="25%"
                           >
                             Média até
                           </th>
                           <th
                             class="text-right caption primary white--text"
-                            width="25%"  
+                            width="25%"
                           >
                             Valor
                           </th>
                           <th
                             class="text-right caption primary white--text"
-                            width="25%"  
+                            width="25%"
                           >
                             Ações
                           </th>
@@ -127,13 +135,15 @@
                       </thead>
                       <tbody>
                         <tr v-for="item in lstLctoGratificacoes" :key="item.id">
-                          <td class="caption" width="25%"  align="right">
+                          <td class="caption" width="25%" align="right">
                             {{ item.mediade }}
                           </td>
-                          <td class="caption" width="25%"  align="right">
+                          <td class="caption" width="25%" align="right">
                             {{ item.mediaate }}
                           </td>
-                          <td class="caption" width="25%"  align="right">{{ item.valor }}</td>
+                          <td class="caption" width="25%" align="right">
+                            {{ item.valor }}
+                          </td>
 
                           <td class="caption">
                             <div style="display: flex; align-items: center">
@@ -163,24 +173,46 @@
       </v-card-text>
     </v-card>
 
+    <v-dialog v-model="dialog1" max-width="600px" persistent class="last-modal">
+      <span> teste </span>
+      <v-row>
+        <v-simple-table fixed-header height="auto" width="100" class="table">
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-right caption primary white--text" width="25%">
+                  Média de
+                </th>
+                <th class="text-right caption primary white--text" width="25%">
+                  Média até
+                </th>
+                <th class="text-right caption primary white--text" width="25%">
+                  Valor
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in lstLctoGratificacoes" :key="item.id">
+                <td class="caption" width="25%" align="right">
+                  {{ item.mediade }}
+                </td>
+                <td class="caption" width="25%" align="right">
+                  {{ item.mediaate }}
+                </td>
+                <td class="caption" width="25%" align="right">
+                  {{ item.valor }}
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
 
-    <v-dialog v-model="dialog1" max-width="600px" persistent>
-    <span>
-      teste
-    </span>
-    <v-row>
-      <v-col cols="1">
-        <v-btn @click="dialog1 = false" color="primary">Fechar </v-btn>
-      </v-col>
-
-    </v-row>
-
-
-    
+        <v-col cols="1">
+          <v-btn @click="dialog1 = false" color="primary">Fechar </v-btn>
+        </v-col>
+      </v-row>
+    </v-dialog>
   </v-dialog>
-
-  </v-dialog>
- 
 </template>
 
 
@@ -210,7 +242,7 @@ export default {
     };
   },
   props: {
-    id: Number
+    id: Number,
   },
   methods: {
     sair() {
@@ -337,10 +369,8 @@ export default {
       } finally {
         this.loading = false;
       }
-      
     },
 
-    
     async retornaListaLctoRegraGratificacao() {
       try {
         this.avisoErro = "";
@@ -351,7 +381,6 @@ export default {
           idGratificacao: this.id,
         };
 
-        
         const token = cripto.decrypt(sessionStorage.token);
         const autorizaAxios = axios.create({
           baseURL: caminhoAPI(this.tipoCaminho),
@@ -379,7 +408,6 @@ export default {
     },
 
     async eliminaLctoRegraGratificacao(id) {
-
       try {
         if (this.id === 0) {
           return;
@@ -388,27 +416,29 @@ export default {
         this.loading = true;
         this.dialog1 = false;
 
-        
         const dados = {
           id: id,
-          idCliente: this.idCliente
+          idCliente: this.idCliente,
         };
-        console.log(dados)
+
+        console.log(dados);
         const token = Cripto.decrypt(sessionStorage.token);
         const autorizaAxios = axios.create({
           baseURL: caminhoAPI(this.tipoCaminho),
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        await autorizaAxios.post("eliminaLctoRegraGratificacao", dados).then(res => {
-          if (res.data.name == "error") {
-            this.aviso =
-              "Não foi possível eliminar a gratificação, \n tente mais tarde!";
-            this.snackbarAviso = true;
-          }
-        });
+        await autorizaAxios
+          .post("eliminaLctoRegraGratificacao", dados)
+          .then((res) => {
+            if (res.data.name == "error") {
+              this.aviso =
+                "Não foi possível eliminar a gratificação, \n tente mais tarde!";
+              this.snackbarAviso = true;
+            }
+          });
       } catch (error) {
         this.avisoErro =
           "Não foi possível eliminar a gratificação, \n tente mais tarde!";
@@ -417,12 +447,8 @@ export default {
       } finally {
         this.loading2 = false;
         this.retornaListaLctoRegraGratificacao();
-
       }
     },
-
-    
-    
   },
   computed: {
     computedDateFormatted() {
@@ -430,7 +456,7 @@ export default {
     },
   },
   mounted() {
-   if (localStorage.tipoCaminho) {
+    if (localStorage.tipoCaminho) {
       this.tipoCaminho = localStorage.tipoCaminho;
     }
   },
@@ -458,11 +484,25 @@ export default {
 .v-menu__content {
   box-shadow: none !important;
 }
-.dialog{
-  height:1000px;
+.dialog {
+  height: 1000px;
+}
+.last-modal {
+  height: 100%;
 }
 
+.last-modal .v-dialog__content {
+  padding: 0;
+}
 
+.last-modal .v-dialog__container {
+  height: 100%;
+}
+
+.last-modal .v-simple-table {
+  height: calc(100% - 48px); /* 48px é a altura do cabeçalho da tabela */
+  overflow-y: auto;
+}
 </style>
 
 

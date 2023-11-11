@@ -368,7 +368,6 @@ export default {
               this.lstLctoGratificacoes = res.data;
             } else {
               this.lstLctoGratificacoes = [];
-              this.limpaCampos();
             }
           });
       } catch (error) {

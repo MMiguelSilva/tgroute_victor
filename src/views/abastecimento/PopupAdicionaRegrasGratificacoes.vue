@@ -65,7 +65,7 @@
           <v-spacer></v-spacer>
 
           <v-row>
-            <v-col align="center" >
+            <v-col align="center">
               <v-btn
                 x-small
                 class="primary mx-0"
@@ -134,7 +134,10 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="item in lstLctoGratificacoes" :key="item.id">
+                        <tr
+                          v-for="item in computedLstLctoGratificacoes"
+                          :key="item.id"
+                        >
                           <td class="caption" width="25%" align="right">
                             {{ item.mediade }}
                           </td>
@@ -147,7 +150,7 @@
 
                           <td class="caption">
                             <div style="display: flex; align-items: center">
-                              <v-btn @click="dialog1 = true">
+                              <v-btn @click="dialog1 = true; idLcto = item.id">
                                 <v-icon size="20">edit</v-icon>
                               </v-btn>
 
@@ -157,6 +160,7 @@
                                 text
                                 @click="eliminaLctoRegraGratificacao(item.id)"
                               >
+
                                 <v-icon size="20" color="red">delete</v-icon>
                               </v-btn>
                             </div>
@@ -173,44 +177,45 @@
       </v-card-text>
     </v-card>
 
-    <v-dialog v-model="dialog1" max-width="600px" persistent class="last-modal">
-      <span> teste </span>
-      <v-row>
-        <v-simple-table fixed-header height="auto" width="100" class="table">
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th class="text-right caption primary white--text" width="25%">
-                  Média de
-                </th>
-                <th class="text-right caption primary white--text" width="25%">
-                  Média até
-                </th>
-                <th class="text-right caption primary white--text" width="25%">
-                  Valor
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in lstLctoGratificacoes" :key="item.id">
-                <td class="caption" width="25%" align="right">
-                  {{ item.mediade }}
-                </td>
-                <td class="caption" width="25%" align="right">
-                  {{ item.mediaate }}
-                </td>
-                <td class="caption" width="25%" align="right">
-                  {{ item.valor }}
-                </td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
+    <v-dialog v-model="dialog1" max-width="600px" persistent>
+      <div style="background-color:white;">
+      <v-row style="border-radius: 6px;">
+      <v-col style="padding-left: 20px;" cols="6">
+        <v-text-field
+          type="number"
+          label="Média de"
+          hint="Média percorrida pelo motorista."
+          v-model="mediadeEdit"
+          prepend-icon="local_shipping"
+          :maxlength="20"
+        ></v-text-field>
 
-        <v-col cols="1">
+        <v-text-field
+          type="number"
+          hint="Média nescessária para a gratificação."
+          label="Média até"
+          v-model="mediaateEdit"
+          prepend-icon="pin_drop"
+          :maxlength="20"
+        ></v-text-field>
+
+        <v-text-field
+          type="number"
+          label="Valor"
+          hint="Valor da gratificação."
+          v-model="valorEdit"
+          prepend-icon="payments"
+          :maxlength="20"
+        ></v-text-field>
+
+        <div class="buttonContainer">
+          <v-btn @click="salvarEdicao" color="primary">Salvar</v-btn>
           <v-btn @click="dialog1 = false" color="primary">Fechar </v-btn>
-        </v-col>
-      </v-row>
+        </div>
+        
+      </v-col>
+    </v-row>
+  </div>
     </v-dialog>
   </v-dialog>
 </template>
@@ -239,6 +244,11 @@ export default {
       lstLctoGratificacoes: [],
       AbrirDialogRegraGratificacoes: false,
       idAtual: 0,
+      mediadeEdit: null,
+      mediaateEdit: null,
+      valorEdit: null,
+      idLcto:0,
+      
     };
   },
   props: {
@@ -271,6 +281,7 @@ export default {
         this.insereGratificacao();
       }
     },
+    
     async insereGratificacao() {
       try {
         console.log("insere");
@@ -318,12 +329,53 @@ export default {
       }
     },
 
+    async insereLctoRegraGratificacao() {
+      try {
+        const token = cripto.decrypt(sessionStorage.token);
+        const autorizaAxios = axios.create({
+          baseURL: caminhoAPI(this.tipoCaminho),
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const dados = {
+        id: this.idLcto,
+        idCliente: this.idCliente,
+        mediade: this.mediadeEdit,
+        mediaate: this.mediaateEdit,
+        valor: this.valorEdit,
+      };
+
+
+        await autorizaAxios.post("insereLctoRegraGratificacao", dados).then((res) => {
+        if (res.data.name !== "error") {
+          this.loading = false;
+          this.dialog1 = false;
+          this.retornaListaLctoRegraGratificacao();
+          this.limpaCampos(); // Limpa os campos se necessário
+        } else {
+          this.avisoErro =
+            "Não foi possível gravar a gratificação, tente mais tarde!";
+        }
+      });
+    } catch (error) {
+      this.avisoErro =
+        "Não foi possível gravar a gratificação, tente mais tarde!";
+      console.log("Erro no insereLctoRegraGratificacao - " + error);
+    } finally {
+      this.loading = false;
+    }
+  },
+
+
     formatDate(data) {
       if (!data) return null;
 
       const [year, month, day] = data.split("-");
       return `${day}/${month}/${year}`;
     },
+
     alteraGratificacao(gratificacao) {
       this.dialog = true;
       this.$emit("alteraGratificacao");
@@ -395,6 +447,7 @@ export default {
             console.log(res.data);
             if (!res.data.length == 0) {
               this.lstLctoGratificacoes = res.data;
+              console.log(398, this.lstLctoGratificacoes);
             } else {
               this.lstLctoGratificacoes = [];
               this.limpaCampos();
@@ -405,6 +458,38 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+
+    alteraLctoRegraGratificacao(item) {
+    this.mediadeEdit = item.mediade;
+    this.mediaateEdit = item.mediaate;
+    this.valorEdit = item.valor;
+    this.idLcto = item.id;
+  },
+
+  salvarEdicao() {
+    
+    const index = this.lstLctoGratificacoes.findIndex(item => item.id === this.idLcto);
+
+    if (index !== -1) {
+      
+      this.$set(this.lstLctoGratificacoes, index, {
+        id: this.idLcto,
+        mediade: this.mediadeEdit,
+        mediaate: this.mediaateEdit,
+        valor: this.valorEdit,
+      });
+    }
+
+    this.dialog1 = false;
+    this.insereLctoRegraGratificacao();
+  },
+
+
+    concluirEdicao() {
+      this.lstLctoGratificacoes = this.computedLstLctoGratificacoes;
+
+      this.dialog1 = false;
     },
 
     async eliminaLctoRegraGratificacao(id) {
@@ -454,6 +539,16 @@ export default {
     computedDateFormatted() {
       return this.formatDate(this.data);
     },
+    computedLstLctoGratificacoes() {
+      return this.lstLctoGratificacoes.map((item) => {
+        if (item.id === this.idAtual) {
+          item.mediade = this.mediadeEdit;
+          item.mediaate = this.mediaateEdit;
+          item.valor = this.valorEdit;
+        }
+        return item;
+      });
+    },
   },
   mounted() {
     if (localStorage.tipoCaminho) {
@@ -481,6 +576,10 @@ export default {
 </script>
 
 <style>
+.with-background-color .v-dialog__content {
+  background-color: red;
+}
+
 .v-menu__content {
   box-shadow: none !important;
 }
@@ -502,6 +601,19 @@ export default {
 .last-modal .v-simple-table {
   height: calc(100% - 48px); /* 48px é a altura do cabeçalho da tabela */
   overflow-y: auto;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom:10px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>
 

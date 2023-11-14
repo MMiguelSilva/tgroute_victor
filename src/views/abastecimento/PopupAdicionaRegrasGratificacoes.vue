@@ -450,7 +450,6 @@ export default {
               console.log(398, this.lstLctoGratificacoes);
             } else {
               this.lstLctoGratificacoes = [];
-              this.limpaCampos();
             }
           });
       } catch (error) {

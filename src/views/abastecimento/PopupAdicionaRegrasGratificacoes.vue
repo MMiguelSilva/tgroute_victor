@@ -208,6 +208,7 @@
           :maxlength="20"
         ></v-text-field>
 
+
         <div class="buttonContainer">
           <v-btn @click="salvarEdicao" color="primary">Salvar</v-btn>
           <v-btn @click="dialog1 = false" color="primary">Fechar </v-btn>

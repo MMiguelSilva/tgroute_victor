@@ -240,9 +240,9 @@ export default {
       idCliente: idCliente,
     };
 
-    const token = Cripto.decrypt(sessionStorage.token); // Supondo que Cripto.decrypt seja uma função válida
+    const token = Cripto.decrypt(sessionStorage.token); 
     const autorizaAxios = axios.create({
-      baseURL: caminhoAPI(this.tipoCaminho), // Supondo que caminhoAPI seja uma função válida
+      baseURL: caminhoAPI(this.tipoCaminho), 
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -260,7 +260,7 @@ export default {
     }
   } catch (error) {
     this.avisoErro = "Falha ao buscar a gratificação. Tente novamente mais tarde.";
-    console.log("Erro ao buscar a gratificação - " + error);
+    //console.log("Erro ao buscar a gratificação - " + error);
   } finally {
     this.loading = false;
   }
@@ -280,7 +280,7 @@ export default {
           idCliente: this.idCliente
         };
 
-        console.log(dados)
+        //console.log(dados)
         const token = Cripto.decrypt(sessionStorage.token);
         const autorizaAxios = axios.create({
           baseURL: caminhoAPI(this.tipoCaminho),
@@ -302,7 +302,7 @@ export default {
         this.avisoErro =
           "Não foi possível eliminar a gratificação, \n tente mais tarde!";
         this.loading2 = false;
-        console.log("Erro no eliminaGratificacao - " + error);
+        //console.log("Erro no eliminaGratificacao - " + error);
       } finally {
         this.loading2 = false;
       }

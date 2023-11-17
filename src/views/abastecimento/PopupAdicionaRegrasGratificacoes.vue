@@ -151,7 +151,7 @@
                             {{ item.valor }}
                           </td>
 
-                          <td class="caption">
+                          <td class="caption" width="25%" align="right">
                             <div style="display: flex; align-items: center">
                               <v-btn
                                 @click="
@@ -300,7 +300,7 @@ export default {
     },
     async insereGratificacao() {
       try {
-        console.log("insere");
+        //console.log("insere");
         const token = cripto.decrypt(sessionStorage.token);
         const autorizaAxios = axios.create({
           baseURL: caminhoAPI(this.tipoCaminho),
@@ -321,10 +321,10 @@ export default {
           cadastroAtivo: ativo,
         };
 
-        console.log(dados);
+        //console.log(dados);
 
         await autorizaAxios.post("insereGratificacao", dados).then((res) => {
-          console.log(res.data);
+          //console.log(res.data);
           if (res.data.name != "error") {
             this.loading = false;
             this.dialog = false;
@@ -339,7 +339,7 @@ export default {
       } catch (error) {
         this.avisoErro =
           "Não foi possível gravar a gratificação, tente mais tarde!";
-        console.log("Erro no insereGratificacao - " + error);
+        //console.log("Erro no insereGratificacao - " + error);
       } finally {
         this.loading = false;
       }
@@ -364,7 +364,7 @@ export default {
           valor: this.valorEdit,
         };
 
-        console.log(dados);
+        //console.log(dados);
 
         await autorizaAxios
           .post("insereLctoRegraGratificacao", dados)
@@ -382,7 +382,7 @@ export default {
       } catch (error) {
         this.avisoErro =
           "Não foi possível gravar a gratificação, tente mais tarde!";
-        console.log("Erro no insereLctoRegraGratificacao - " + error);
+        //console.log("Erro no insereLctoRegraGratificacao - " + error);
       } finally {
         this.loading = false;
       }
@@ -395,10 +395,10 @@ export default {
       return `${day}/${month}/${year}`;
     },
 
-    alteraGratificacao(gratificacao) {
+    alteraGratificacao() {
       this.dialog = true;
       this.$emit("alteraGratificacao");
-      console.log(gratificacao);
+      //console.log(gratificacao);
       this.AbrirDialogRegraGratificacoes = true;
     },
 
@@ -554,7 +554,7 @@ export default {
         this.avisoErro =
           "Não foi possível eliminar a gratificação, \n tente mais tarde!";
         this.loading2 = false;
-        console.log("Erro no eliminaLctoRegraGratificacao - " + error);
+        //console.log("Erro no eliminaLctoRegraGratificacao - " + error);
       } finally {
         this.loading2 = false;
         this.retornaListaLctoRegraGratificacao();

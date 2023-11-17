@@ -8,7 +8,7 @@
         x-small
         v-bind="attrs"
         v-on="on"
-        @click="dialog = true"
+        @click="dialog = true; "
       >
         <v-icon x-small>note_add</v-icon>Nova Regra
       </v-btn>
@@ -70,7 +70,6 @@
                 x-small
                 class="primary mx-0"
                 @click="validaCampos"
-                :loading="loading"
                 >Gravar</v-btn
               >
 
@@ -81,8 +80,8 @@
                 @click="
                   dialog1 = true;
                   limpaCamposLcto();
+                  idLcto = 0;
                 "
-                :loading="loading"
                 >ADICIONAR REGRA</v-btn
               >
 
@@ -358,6 +357,7 @@ export default {
 
         const dados = {
           id: this.idLcto,
+          idGratificacao: this.id,
           idCliente: this.idCliente,
           mediade: this.mediadeEdit,
           mediaate: this.mediaateEdit,
@@ -421,7 +421,7 @@ export default {
         });
 
         await autorizaAxios.post("retornaGratificacao", dados).then((res) => {
-          console.log(res.data);
+          
           if (!res.data.length == 0) {
             if (Number(this.id) > 0) {
               if (res.data[0].cadastroativo) {
@@ -463,10 +463,10 @@ export default {
         await autorizaAxios
           .post("retornaListaLctoRegraGratificacao", dados)
           .then((res) => {
-            console.log(res.data);
+            
             if (!res.data.length == 0) {
               this.lstLctoGratificacoes = res.data;
-              console.log(398, this.lstLctoGratificacoes);
+             
             } else {
               this.lstLctoGratificacoes = [];
             }
@@ -501,9 +501,10 @@ export default {
         this.mediaateEdit < 0 ||
         this.valorEdit < 0
       ) {
+
         this.aviso =
-          "Não foi possível realizar a gravação, campos estão vazios ou inválidos, tente novamente!";
-        this.snackbarAviso = true;
+        "Não foi possível realizar a gravação, campos estão vazios ou inválidos, tente novamente!";
+        this.snackbarErro = true;
         return; // Abortar a gravação se os campos estiverem vazios, inválidos ou negativos
       }
 
@@ -531,7 +532,7 @@ export default {
           idCliente: this.idCliente,
         };
 
-        console.log(dados);
+       
         const token = Cripto.decrypt(sessionStorage.token);
         const autorizaAxios = axios.create({
           baseURL: caminhoAPI(this.tipoCaminho),

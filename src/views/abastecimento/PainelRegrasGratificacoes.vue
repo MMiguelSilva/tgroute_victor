@@ -94,7 +94,7 @@
                     <v-card>
                       <v-card-title class="body-1">Deseja alterar a gratificação: {{idAtual}}</v-card-title>
                       <v-card-actions class="justify-space-around">
-                        <v-btn small color="primary" text>
+                        <v-btn small color="primary" text> 
                           <PopupAdicionaRegrasGratificacoes
                             :id="Number(idAtual)"
                             @gratificacaoAtualiza="retornaListaGratificacao"

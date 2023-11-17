@@ -75,14 +75,18 @@
               >
 
               <v-btn
+                v-if="Number(id) > 0"
                 x-small
-                class="primary mx-0"
-                @click="validaCampos"
+                class="primary mx-0 ml-2"
+                @click="
+                  dialog1 = true;
+                  limpaCamposLcto();
+                "
                 :loading="loading"
                 >ADICIONAR REGRA</v-btn
               >
 
-              <v-btn x-small class="primary mx-0 ml-5" @click="sair"
+              <v-btn x-small class="primary mx-0 ml-2" @click="sair"
                 >Sair</v-btn
               >
             </v-col>
@@ -150,7 +154,14 @@
 
                           <td class="caption">
                             <div style="display: flex; align-items: center">
-                              <v-btn @click="dialog1 = true; idLcto = item.id">
+                              <v-btn
+                                @click="
+                                  dialog1 = true;
+                                  idLcto = item.id;
+                                  atualizaCampos(item);
+                                "
+                                v-if="Number(id) > 0"
+                              >
                                 <v-icon size="20">edit</v-icon>
                               </v-btn>
 
@@ -160,7 +171,6 @@
                                 text
                                 @click="eliminaLctoRegraGratificacao(item.id)"
                               >
-
                                 <v-icon size="20" color="red">delete</v-icon>
                               </v-btn>
                             </div>
@@ -178,45 +188,43 @@
     </v-card>
 
     <v-dialog v-model="dialog1" max-width="600px" persistent>
-      <div style="background-color:white;">
-      <v-row style="border-radius: 6px;">
-      <v-col style="padding-left: 20px;" cols="6">
-        <v-text-field
-          type="number"
-          label="Média de"
-          hint="Média percorrida pelo motorista."
-          v-model="mediadeEdit"
-          prepend-icon="local_shipping"
-          :maxlength="20"
-        ></v-text-field>
+      <div style="background-color: white">
+        <v-row style="border-radius: 6px">
+          <v-col style="padding-left: 20px" cols="6">
+            <v-text-field
+              type="number"
+              label="Média de"
+              hint="Média percorrida pelo motorista."
+              v-model="mediadeEdit"
+              prepend-icon="local_shipping"
+              :maxlength="20"
+            ></v-text-field>
 
-        <v-text-field
-          type="number"
-          hint="Média nescessária para a gratificação."
-          label="Média até"
-          v-model="mediaateEdit"
-          prepend-icon="pin_drop"
-          :maxlength="20"
-        ></v-text-field>
+            <v-text-field
+              type="number"
+              hint="Média nescessária para a gratificação."
+              label="Média até"
+              v-model="mediaateEdit"
+              prepend-icon="pin_drop"
+              :maxlength="20"
+            ></v-text-field>
 
-        <v-text-field
-          type="number"
-          label="Valor"
-          hint="Valor da gratificação."
-          v-model="valorEdit"
-          prepend-icon="payments"
-          :maxlength="20"
-        ></v-text-field>
+            <v-text-field
+              type="number"
+              label="Valor"
+              hint="Valor da gratificação."
+              v-model="valorEdit"
+              prepend-icon="payments"
+              :maxlength="20"
+            ></v-text-field>
 
-
-        <div class="buttonContainer">
-          <v-btn @click="salvarEdicao" color="primary">Salvar</v-btn>
-          <v-btn @click="dialog1 = false" color="primary">Fechar </v-btn>
-        </div>
-        
-      </v-col>
-    </v-row>
-  </div>
+            <div class="buttonContainer">
+              <v-btn @click="gravarEdicao" color="primary">Gravar</v-btn>
+              <v-btn @click="dialog1 = false" color="primary">Fechar </v-btn>
+            </div>
+          </v-col>
+        </v-row>
+      </div>
     </v-dialog>
   </v-dialog>
 </template>
@@ -248,8 +256,7 @@ export default {
       mediadeEdit: null,
       mediaateEdit: null,
       valorEdit: null,
-      idLcto:0,
-      
+      idLcto: 0,
     };
   },
   props: {
@@ -263,6 +270,11 @@ export default {
     limpaCampos() {
       this.avisoErro = "";
       this.descricao = "";
+    },
+    limpaCamposLcto() {
+      this.mediadeEdit = "";
+      this.mediaateEdit = "";
+      this.valorEdit = "";
     },
     validaCampos() {
       if (this.cadastroAtivoSelect == "" || this.cadastroAtivoSelect == null) {
@@ -282,7 +294,11 @@ export default {
         this.insereGratificacao();
       }
     },
-    
+    atualizaCampos(item) {
+      this.mediaateEdit = item.mediaate;
+      this.mediadeEdit = item.mediade;
+      this.valorEdit = item.valor;
+    },
     async insereGratificacao() {
       try {
         console.log("insere");
@@ -341,34 +357,36 @@ export default {
         });
 
         const dados = {
-        id: this.idLcto,
-        idCliente: this.idCliente,
-        mediade: this.mediadeEdit,
-        mediaate: this.mediaateEdit,
-        valor: this.valorEdit,
-      };
+          id: this.idLcto,
+          idCliente: this.idCliente,
+          mediade: this.mediadeEdit,
+          mediaate: this.mediaateEdit,
+          valor: this.valorEdit,
+        };
 
+        console.log(dados);
 
-        await autorizaAxios.post("insereLctoRegraGratificacao", dados).then((res) => {
-        if (res.data.name !== "error") {
-          this.loading = false;
-          this.dialog1 = false;
-          this.retornaListaLctoRegraGratificacao();
-          this.limpaCampos(); // Limpa os campos se necessário
-        } else {
-          this.avisoErro =
-            "Não foi possível gravar a gratificação, tente mais tarde!";
-        }
-      });
-    } catch (error) {
-      this.avisoErro =
-        "Não foi possível gravar a gratificação, tente mais tarde!";
-      console.log("Erro no insereLctoRegraGratificacao - " + error);
-    } finally {
-      this.loading = false;
-    }
-  },
-
+        await autorizaAxios
+          .post("insereLctoRegraGratificacao", dados)
+          .then((res) => {
+            if (res.data.name !== "error") {
+              this.loading = false;
+              this.dialog1 = false;
+              this.retornaListaLctoRegraGratificacao();
+              this.limpaCampos(); // Limpa os campos se necessário
+            } else {
+              this.avisoErro =
+                "Não foi possível gravar a gratificação, tente mais tarde!";
+            }
+          });
+      } catch (error) {
+        this.avisoErro =
+          "Não foi possível gravar a gratificação, tente mais tarde!";
+        console.log("Erro no insereLctoRegraGratificacao - " + error);
+      } finally {
+        this.loading = false;
+      }
+    },
 
     formatDate(data) {
       if (!data) return null;
@@ -461,30 +479,37 @@ export default {
     },
 
     alteraLctoRegraGratificacao(item) {
-    this.mediadeEdit = item.mediade;
-    this.mediaateEdit = item.mediaate;
-    this.valorEdit = item.valor;
-    this.idLcto = item.id;
-  },
+      if (Number(this.id) == 0) {
+        this.mediadeEdit = item.mediade;
+        this.mediaateEdit = item.mediaate;
+        this.valorEdit = item.valor;
+        this.idLcto = item.id;
+      }
+      this.dialog1 = true; // Abrir o dialog1
+    },
 
-  salvarEdicao() {
-    
-    const index = this.lstLctoGratificacoes.findIndex(item => item.id === this.idLcto);
+    gravarEdicao() {
+      // Validar se os campos estão vazios ou são inválidos
+      if (
+        !this.mediadeEdit ||
+        !this.mediaateEdit ||
+        !this.valorEdit ||
+        isNaN(this.mediadeEdit) ||
+        isNaN(this.mediaateEdit) ||
+        isNaN(this.valorEdit) ||
+        this.mediadeEdit < 0 ||
+        this.mediaateEdit < 0 ||
+        this.valorEdit < 0
+      ) {
+        this.aviso =
+          "Não foi possível realizar a gravação, campos estão vazios ou inválidos, tente novamente!";
+        this.snackbarAviso = true;
+        return; // Abortar a gravação se os campos estiverem vazios, inválidos ou negativos
+      }
 
-    if (index !== -1) {
-      
-      this.$set(this.lstLctoGratificacoes, index, {
-        id: this.idLcto,
-        mediade: this.mediadeEdit,
-        mediaate: this.mediaateEdit,
-        valor: this.valorEdit,
-      });
-    }
-
-    this.dialog1 = false;
-    this.insereLctoRegraGratificacao();
-  },
-
+      // Continuar com a gravação
+      this.insereLctoRegraGratificacao();
+    },
 
     concluirEdicao() {
       this.lstLctoGratificacoes = this.computedLstLctoGratificacoes;
@@ -607,7 +632,7 @@ export default {
   display: flex;
   gap: 10px;
   margin-top: 10px;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 }
 
 input[type="number"]::-webkit-inner-spin-button,

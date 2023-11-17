@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login'
 import MinhaConta from '../views/MinhaConta'
 import PainelRegrasGratificacoes from '../views/abastecimento/PainelRegrasGratificacoes'
-import CadLimiteVelocidade from '../views/configuracoes/CadLimiteVelocidade'
+import CadParametroTrocaOleo from '../views/configuracoes/CadParametroTrocaOleo.vue'
 
 Vue.use(VueRouter)
 
@@ -25,9 +25,9 @@ const routes = [
   },
 
   {
-    path: '/cadlimitevelocidade',
-    name: 'cadlimitevelocidade',
-    component: CadLimiteVelocidade
+    path: '/CadParametroTrocaOleo',
+    name: 'CadParametroTrocaOleo',
+    component: CadParametroTrocaOleo
   },
 
   {

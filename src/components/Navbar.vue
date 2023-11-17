@@ -72,6 +72,12 @@
             </v-list-item-content>
           </v-list-item>
 
+          <v-list-item router :to="`/cadParametroTrocaOleo`">
+            <v-list-item-content>
+              <v-list-item-title class="yellow--text ml-16">Cadastro de parâmetros de troca de óleo</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
         </v-list-item-group>
 
        

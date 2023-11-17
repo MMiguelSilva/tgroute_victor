@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login'
 import MinhaConta from '../views/MinhaConta'
 import PainelRegrasGratificacoes from '../views/abastecimento/PainelRegrasGratificacoes'
+import CadLimiteVelocidade from '../views/configuracoes/CadLimiteVelocidade'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,12 @@ const routes = [
     path: '/painelregrasgratificacoes',
     name: 'painelregrasgratificacoes',
     component: PainelRegrasGratificacoes
+  },
+
+  {
+    path: '/cadlimitevelocidade',
+    name: 'cadlimitevelocidade',
+    component: CadLimiteVelocidade
   },
 
   {

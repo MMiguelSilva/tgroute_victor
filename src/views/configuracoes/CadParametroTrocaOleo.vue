@@ -1,11 +1,22 @@
 <template>
   <div class="cadlimitevelocidade">
-    <h3 class="subheading grey--text mt-2">Cadastro de parâmetros de troca de óleo</h3>
+    <h3 class="subheading grey--text mt-2">
+      Cadastro de parâmetros de troca de óleo
+    </h3>
 
-    <v-dialog v-model="loading" persistent width="100" content-class="loading-dialog">
+    <v-dialog
+      v-model="loading"
+      persistent
+      width="100"
+      content-class="loading-dialog"
+    >
       <v-container fill-height>
         <v-layout row justify-center align-center>
-          <v-progress-circular indeterminate :width="3" color="primary"></v-progress-circular>
+          <v-progress-circular
+            indeterminate
+            :width="3"
+            color="primary"
+          ></v-progress-circular>
         </v-layout>
       </v-container>
     </v-dialog>
@@ -31,7 +42,7 @@
             label="Selecione o veículo"
             prepend-icon="filter_alt"
             @mousedown="retornaListaVeiculoRastreado"
-            @change="retornaLimiteVelocidade"
+            @change="retornaParametroTrocaOleo"
           ></v-select>
         </v-col>
       </v-row>
@@ -41,8 +52,21 @@
       <v-row>
         <v-col cols="5">
           <v-text-field-dotnumber
-            v-model="limiteVelocidade"
-            v-bind:label="labelLimiteVelocidade"
+            v-model="qtdeMes"
+            v-bind:label="labelQtdeMes"
+            v-bind:properties="{
+              readonly: false,
+              disabled: false,
+              outlined: true,
+              clearable: true,
+              placeholder: '',
+            }"
+            v-bind:options="{ length: 5, empty: null, applyAfter: false }"
+          />
+
+          <v-text-field-dotnumber
+            v-model="qtdeKm"
+            v-bind:label="labelQtdeKm"
             v-bind:properties="{
               readonly: false,
               disabled: false,
@@ -59,8 +83,12 @@
     <v-flex xs12 sm4 md4>
       <v-row>
         <v-col align="center" justify="justify-center">
-          <v-btn x-small class="primary mx-0" @click="confirmar">Confirmar</v-btn>
-          <v-btn x-small class="primary mx-0 ml-5" @click="fechar">Fechar</v-btn>
+          <v-btn x-small class="primary mx-0" @click="confirmar"
+            >Confirmar</v-btn
+          >
+          <v-btn x-small class="primary mx-0 ml-5" @click="fechar"
+            >Fechar</v-btn
+          >
         </v-col>
       </v-row>
     </v-flex>
@@ -84,11 +112,13 @@ export default {
       lstVeiculos: [],
       veiculoSelecionado: "",
       limiteVelocidade: "0",
-      labelLimiteVelocidade: "Limite de velocidade km/h",
+      //labelLimiteVelocidade: "Limite de velocidade km/h",
+      labelQtdeMes: "Quantidade meses para troca",
+      labelQtdeKm: "Quantidade Km para troca",
       aviso: "",
       loading: false,
-      qtdMes: 0,
-      qtdKm: 0
+      qtdeMes: 0,
+      qtdeKm: 0,
     };
   },
   methods: {
@@ -102,7 +132,8 @@ export default {
     limpaCampos() {
       this.lstVeiculos = [];
       this.veiculoSelecionado = "";
-      this.limiteVelocidade = "0";
+      this.qtdeMes = "0";
+      this.qtdeKm = "0";
     },
     descricao(item) {
       return (
@@ -120,56 +151,65 @@ export default {
         const dados = {
           idCliente: this.idCliente,
           idGrupoRastreador: "",
-          idUsuario: this.idUsuario
+          idUsuario: this.idUsuario,
         };
 
         const token = cripto.decrypt(sessionStorage.token);
         const autorizaAxios = axios.create({
           baseURL: caminhoAPI(this.tipoCaminho),
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        await autorizaAxios.post("retornaListaVeiculoRastreado", dados).then(res => {
-          if (!res.data.length == 0) {
-            this.lstVeiculos = res.data;
-          } else {
-            this.lstVeiculos = [];
-          }
-        });
+        await autorizaAxios
+          .post("retornaListaVeiculoRastreado", dados)
+          .then((res) => {
+            if (!res.data.length == 0) {
+              this.lstVeiculos = res.data;
+            } else {
+              this.lstVeiculos = [];
+            }
+          });
       } catch (error) {
         this.aviso = error;
       }
     },
-    async retornaLimiteVelocidade() {
+    //retornaLimiteVelocidade
+    async retornaParametroTrocaOleo() {
       try {
         this.aviso = "";
 
         const dados = {
           idCliente: this.idCliente,
-          idRastreador: this.veiculoSelecionado
+          idRastreador: this.veiculoSelecionado,
         };
 
         const token = cripto.decrypt(sessionStorage.token);
         const autorizaAxios = axios.create({
           baseURL: caminhoAPI(this.tipoCaminho),
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        await autorizaAxios.post("retornaLimiteVelocidade", dados).then(res => {
-          if (!res.data.length == 0) {
-            if (res.data[0].limitevelocidade > 0) {
-              this.limiteVelocidade = res.data[0].limitevelocidade;
+        await autorizaAxios
+          .post("retornaParametroTrocaOleo", dados)
+          .then((res) => {
+            if (!res.data.length == 0) {
+console.log(res.data)
+              if (Number(res.data[0].qtdemes) > 0 && Number(res.data[0].qtdekm)) {
+                this.qtdeMes = res.data[0].qtdemes;
+                this.qtdeKm = res.data[0].qtdekm;
+              } else {
+                this.qtdeMes = "0";
+                this.qtdeKm = "0";
+              }
             } else {
-              this.limiteVelocidade = "0";
+              this.qtdeMes = "0";
+              this.qtdeKm = "0";
             }
-          } else {
-            this.limiteVelocidade = "0";
-          }
-        });
+          });
       } catch (error) {
         this.aviso = error;
       }
@@ -181,9 +221,9 @@ export default {
         return;
       }
 
-      this.gravaLimiteVelocidade();
+      this.gravaParametroTrocaOleo();
     },
-    async gravaLimiteVelocidade() {
+    async gravaParametroTrocaOleo() {
       try {
         this.aviso = "";
         this.loading = true;
@@ -191,33 +231,38 @@ export default {
         const dados = {
           idCliente: this.idCliente,
           idRastreador: this.veiculoSelecionado,
-          limiteVelocidade: this.limiteVelocidade
+          qtdeMes: this.qtdeMes,
+          qtdeKm: this.qtdeKm,
         };
 
         const token = cripto.decrypt(sessionStorage.token);
         const autorizaAxios = axios.create({
           baseURL: caminhoAPI(this.tipoCaminho),
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        await autorizaAxios.post("gravaLimiteVelocidade", dados).then(res => {
-          if (res.data.name != "error") {
-            this.aviso = "Limite gravado com sucesso!";
-            this.snackbarAviso = true;
-            this.limpaCampos();
-          } else {
-            this.aviso = "Não foi possível gravar o Limite, tente mais tarde!";
-            this.snackbarErro = true;
-          }
-        });
+        await autorizaAxios
+          .post("gravaParametroTrocaOleo", dados)
+          .then((res) => {
+            if (res.data.name != "error") {
+              this.aviso =
+                "Quantidade de meses e quilometragem adicionadas com sucesso ";
+              this.snackbarAviso = true;
+              this.limpaCampos();
+            } else {
+              this.aviso =
+                "Não foi possível gravar as quantidades, tente mais tarde!";
+              this.snackbarErro = true;
+            }
+          });
       } catch (error) {
         this.aviso = error;
       } finally {
         this.loading = false;
       }
-    }
+    },
   },
   mounted() {
     if (sessionStorage.idCliente) {
@@ -229,7 +274,8 @@ export default {
     if (localStorage.tipoCaminho) {
       this.tipoCaminho = localStorage.tipoCaminho;
     }
-  }
+    this.retornaParametroTrocaOleo();
+  },
 };
 </script>
 

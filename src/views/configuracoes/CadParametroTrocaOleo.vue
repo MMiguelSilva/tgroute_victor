@@ -1,6 +1,6 @@
 <template>
   <div class="cadlimitevelocidade">
-    <h3 class="subheading grey--text mt-2">Cadastro Limite de velocidade</h3>
+    <h3 class="subheading grey--text mt-2">Cadastro de parâmetros de troca de óleo</h3>
 
     <v-dialog v-model="loading" persistent width="100" content-class="loading-dialog">
       <v-container fill-height>
@@ -86,7 +86,9 @@ export default {
       limiteVelocidade: "0",
       labelLimiteVelocidade: "Limite de velocidade km/h",
       aviso: "",
-      loading: false
+      loading: false,
+      qtdMes: 0,
+      qtdKm: 0
     };
   },
   methods: {

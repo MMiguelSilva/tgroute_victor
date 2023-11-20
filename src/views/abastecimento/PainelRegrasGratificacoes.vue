@@ -1,6 +1,6 @@
 <template>
   <div class="listagratificacao">
-    <h3 class="subheading grey--text mt-2">Lista de regras de gratificações</h3>
+    <h3 class="subheading grey--text mt-2">Lista de gratificações</h3>
 
     <v-snackbar v-model="snackbar" :timeout="4000" top color="success">
       <span>Nova gratificação adicionada!</span>
@@ -229,42 +229,6 @@ export default {
     sortBy: function(prop) {
       this.lstGratificacao.sort((a, b) => (a[prop] < b[prop] ? -1 : 1));
     },
-
-    async retornaGratificacao(id, idCliente) {
-  try {
-    this.loading = true;
-    this.avisoErro = "";
-
-    const dados = {
-      id: id,
-      idCliente: idCliente,
-    };
-
-    const token = Cripto.decrypt(sessionStorage.token); 
-    const autorizaAxios = axios.create({
-      baseURL: caminhoAPI(this.tipoCaminho), 
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    // Faz uma solicitação POST para a API para buscar os dados da gratificação
-    const resposta = await autorizaAxios.post("retornaGratificacao", dados);
-
-    // Lida com os dados da resposta, por exemplo, atualiza o estado do componente
-    if (resposta.data.name == "error") {
-      this.aviso = "Falha ao buscar a gratificação. Tente novamente mais tarde.";
-      this.snackbarAviso = true;
-    } else {
-      // Atualize o estado do seu componente com os dados da gratificação buscados, se necessário.
-    }
-  } catch (error) {
-    this.avisoErro = "Falha ao buscar a gratificação. Tente novamente mais tarde.";
-    //console.log("Erro ao buscar a gratificação - " + error);
-  } finally {
-    this.loading = false;
-  }
-},
 
     async eliminaGratificacao() {
       try {

@@ -25,8 +25,8 @@ const routes = [
   },
 
   {
-    path: '/CadParametroTrocaOleo',
-    name: 'CadParametroTrocaOleo',
+    path: '/cadparametrotrocaoleo',
+    name: 'cadparametrotrocaOleo',
     component: CadParametroTrocaOleo
   },
 

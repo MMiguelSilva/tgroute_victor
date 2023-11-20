@@ -10,7 +10,7 @@
         v-on="on"
         @click="dialog = true; "
       >
-        <v-icon x-small>note_add</v-icon>Nova Regra
+        <v-icon x-small>note_add</v-icon>Nova
       </v-btn>
 
       <v-btn
@@ -47,7 +47,7 @@
               <v-select
                 :items="cadastroAtivo"
                 v-model="cadastroAtivoSelect"
-                label="Usuário ativo"
+                label="Gratificação ativa"
                 prepend-icon="edit"
               ></v-select>
             </v-col>
@@ -97,7 +97,7 @@
                 <v-col>
                   <v-row>
                     <v-col align="center" justify="justify-center">
-                      <span class="caption">Lista de gratificações</span>
+                      <span class="caption">Lista das regras de gratificações</span>
                     </v-col>
                   </v-row>
 

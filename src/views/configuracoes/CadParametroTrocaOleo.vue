@@ -48,12 +48,12 @@
       </v-row>
     </v-flex>
 
-    <v-flex xs12 sm4 md4>
+    <v-flex xs12 sm5 md5>
       <v-row>
         <v-col cols="5">
           <v-text-field-dotnumber
             v-model="qtdeMes"
-            v-bind:label="labelQtdeMes"
+            label="Quantidade meses para troca"
             v-bind:properties="{
               readonly: false,
               disabled: false,
@@ -66,7 +66,7 @@
 
           <v-text-field-dotnumber
             v-model="qtdeKm"
-            v-bind:label="labelQtdeKm"
+            label="Quantidade Km para troca"
             v-bind:properties="{
               readonly: false,
               disabled: false,
@@ -112,9 +112,6 @@ export default {
       lstVeiculos: [],
       veiculoSelecionado: "",
       limiteVelocidade: "0",
-      //labelLimiteVelocidade: "Limite de velocidade km/h",
-      labelQtdeMes: "Quantidade meses para troca",
-      labelQtdeKm: "Quantidade Km para troca",
       aviso: "",
       loading: false,
       qtdeMes: 0,
@@ -175,7 +172,6 @@ export default {
         this.aviso = error;
       }
     },
-    //retornaLimiteVelocidade
     async retornaParametroTrocaOleo() {
       try {
         this.aviso = "";
@@ -197,7 +193,7 @@ export default {
           .post("retornaParametroTrocaOleo", dados)
           .then((res) => {
             if (!res.data.length == 0) {
-console.log(res.data)
+            //console.log(res.data)
               if (Number(res.data[0].qtdemes) > 0 && Number(res.data[0].qtdekm)) {
                 this.qtdeMes = res.data[0].qtdemes;
                 this.qtdeKm = res.data[0].qtdekm;
@@ -248,12 +244,12 @@ console.log(res.data)
           .then((res) => {
             if (res.data.name != "error") {
               this.aviso =
-                "Quantidade de meses e quilometragem adicionadas com sucesso ";
+                "Parâmetros de troca de óleo adicionados com sucesso ";
               this.snackbarAviso = true;
               this.limpaCampos();
             } else {
               this.aviso =
-                "Não foi possível gravar as quantidades, tente mais tarde!";
+                "Não foi possível gravar os parâmetros, tente mais tarde!";
               this.snackbarErro = true;
             }
           });
